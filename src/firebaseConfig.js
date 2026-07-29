@@ -1,18 +1,14 @@
 // ============================================================================
-// FIREBASE CONFIGURATION (FOR NON-CODER USER)
-// ============================================================================
-// 1. Go to https://console.firebase.google.com and create a free Firebase project.
-// 2. Click "Add App" (Web icon '</>') and register your app.
-// 3. Copy your Firebase Configuration keys and replace the values below,
-//    OR you can paste them directly into the "Admin Panel -> Firebase Settings"
-//    tab on the website without editing this file!
+// FIREBASE CONFIGURATION
+// Connected to Firebase project: hsc-study-hub
 // ============================================================================
 
 export const defaultFirebaseConfig = {
-  apiKey: "YOUR_API_KEY",
-  authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
-  projectId: "YOUR_PROJECT_ID",
-  storageBucket: "YOUR_PROJECT_ID.appspot.com",
-  messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
-  appId: "YOUR_APP_ID"
+  apiKey: "AIzaSyBXikEpdUCah1K3mhbNUkUIR_9s7YcXrbA",
+  authDomain: "hsc-study-hub.firebaseapp.com",
+  projectId: "hsc-study-hub",
+  storageBucket: "hsc-study-hub.firebasestorage.app",
+  messagingSenderId: "24656282138",
+  appId: "1:24656282138:web:e3dfe90bb25ca812d587a3",
+  measurementId: "G-ZHW6CFQCPD"
 };

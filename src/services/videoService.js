@@ -393,3 +393,31 @@ export async function isTagInUse(subjectId, type, value) {
     return false;
   });
 }
+
+/**
+ * Helper for non-coder user: Seed sample videos and tags into live Firestore database
+ * so they can immediately test their connected Firebase project!
+ */
+export async function seedSampleDataToFirestore() {
+  if (isDemoMode) {
+    alert("You are in Demo Mode (LocalStorage). Sample data is already present!");
+    return;
+  }
+  try {
+    // 1. Add sample videos
+    for (const vid of INITIAL_SAMPLE_VIDEOS) {
+      const { id, ...data } = vid;
+      await addDoc(collection(db, 'videos'), { ...data, createdAt: Date.now() });
+    }
+    // 2. Add sample tags
+    for (const tag of INITIAL_SAMPLE_TAGS) {
+      const { id, ...data } = tag;
+      await addDoc(collection(db, 'tags'), data);
+    }
+    return true;
+  } catch (err) {
+    console.error('Error seeding sample data to Firestore:', err);
+    throw err;
+  }
+}
+

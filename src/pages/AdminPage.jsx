@@ -14,7 +14,8 @@ import {
   getTagsBySubject, 
   renameTag, 
   deleteTag, 
-  isTagInUse 
+  isTagInUse,
+  seedSampleDataToFirestore
 } from '../services/videoService';
 import { SUBJECTS, SUBJECTS_MAP } from '../constants/subjects';
 import { 
@@ -276,6 +277,20 @@ export default function AdminPage() {
     saveCustomFirebaseConfig(customConfig);
   };
 
+  // Seed sample data into Firestore for non-coder testing
+  const handleSeedSampleData = async () => {
+    if (!window.confirm("Do you want to load 16 sample HSC videos into your live Firestore database for testing?")) return;
+    setLoadingData(true);
+    try {
+      await seedSampleDataToFirestore();
+      alert("Success! 16 sample videos and tags have been loaded into your live Firestore database.");
+      await loadData();
+    } catch (err) {
+      alert("Error loading sample data: " + err.message);
+      setLoadingData(false);
+    }
+  };
+
   // --------------------------------------------------------------------------
   // LOGIN SCREEN (If using Firebase and not logged in)
   // --------------------------------------------------------------------------
@@ -494,13 +509,25 @@ export default function AdminPage() {
               </p>
             </div>
 
-            <button
-              onClick={handleOpenAddVideo}
-              className="px-5 py-2.5 rounded-full text-xs font-bold bg-accent text-white hover:bg-accent/90 transition-all shadow-pill flex items-center gap-2 hover:scale-105"
-            >
-              <Plus className="w-4 h-4" />
-              <span>Add New Video</span>
-            </button>
+            <div className="flex items-center gap-2">
+              {!isDemoMode && (
+                <button
+                  onClick={handleSeedSampleData}
+                  className="px-4 py-2.5 rounded-full text-xs font-bold bg-purple/20 hover:bg-purple/30 text-dark transition-all flex items-center gap-1.5"
+                  title="Populate live Firestore with sample HSC videos"
+                >
+                  <Sparkles className="w-3.5 h-3.5 text-purple-dark" />
+                  <span>Load Sample Videos</span>
+                </button>
+              )}
+              <button
+                onClick={handleOpenAddVideo}
+                className="px-5 py-2.5 rounded-full text-xs font-bold bg-accent text-white hover:bg-accent/90 transition-all shadow-pill flex items-center gap-2 hover:scale-105"
+              >
+                <Plus className="w-4 h-4" />
+                <span>Add New Video</span>
+              </button>
+            </div>
           </div>
 
           {/* Videos Table */}
@@ -515,12 +542,22 @@ export default function AdminPage() {
                 <p className="text-sm font-bold text-dark">
                   No videos added to {currentSubject.name} yet
                 </p>
-                <button
-                  onClick={handleOpenAddVideo}
-                  className="px-4 py-2 rounded-full text-xs font-bold bg-accent text-white"
-                >
-                  + Add First Video
-                </button>
+                <div className="flex items-center justify-center gap-3 pt-2">
+                  {!isDemoMode && (
+                    <button
+                      onClick={handleSeedSampleData}
+                      className="px-4 py-2 rounded-full text-xs font-bold bg-purple/30 hover:bg-purple/40 text-dark"
+                    >
+                      ✨ Load 16 Sample Videos
+                    </button>
+                  )}
+                  <button
+                    onClick={handleOpenAddVideo}
+                    className="px-4 py-2 rounded-full text-xs font-bold bg-accent text-white"
+                  >
+                    + Add First Video
+                  </button>
+                </div>
               </div>
             ) : (
               <div className="overflow-x-auto">
