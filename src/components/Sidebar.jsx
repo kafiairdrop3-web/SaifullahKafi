@@ -89,8 +89,8 @@ export default function Sidebar() {
         </div>
       </div>
 
-      {/* Footer Admin Link */}
-      <div className="p-4 border-t border-dark/5">
+      {/* Footer Admin Link - hidden from public */}
+      {/* <div className="p-4 border-t border-dark/5">
         <NavLink
           to="/admin"
           className={({ isActive }) =>
@@ -109,7 +109,7 @@ export default function Sidebar() {
             </span>
           </div>
         </NavLink>
-      </div>
+      </div> */}
     </aside>
   );
 }
