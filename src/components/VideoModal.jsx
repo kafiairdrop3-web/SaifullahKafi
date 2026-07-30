@@ -44,7 +44,7 @@ export default function VideoModal({ video, onClose }) {
   return (
     <div
       onClick={onClose}
-      className="fixed inset-0 z-50 bg-dark/75 backdrop-blur-sm flex items-center justify-center p-4 overflow-y-auto animate-fadeIn"
+      className="fixed inset-0 z-50 bg-black/40 backdrop-blur-sm flex items-center justify-center p-4 overflow-y-auto animate-fadeIn"
     >
       <div
         onClick={(e) => e.stopPropagation()}

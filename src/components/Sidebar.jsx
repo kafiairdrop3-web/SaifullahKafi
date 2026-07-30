@@ -1,5 +1,5 @@
 import React from 'react';
-import { NavLink } from 'react-router-dom';
+import { NavLink, useLocation } from 'react-router-dom';
 import { SUBJECTS } from '../constants/subjects';
 import { 
   Home, 
@@ -25,6 +25,9 @@ const iconMap = {
 };
 
 export default function Sidebar() {
+  const location = useLocation();
+  const isAdminPage = location.pathname.startsWith('/admin');
+
   return (
     <aside className="w-64 bg-white/70 backdrop-blur-md border-r border-dark/5 flex flex-col justify-between shrink-0 h-[calc(100vh-65px)] sticky top-[65px] hidden lg:flex">
       <div className="p-4 space-y-6 overflow-y-auto">
@@ -89,27 +92,28 @@ export default function Sidebar() {
         </div>
       </div>
 
-      {/* Footer Admin Link - hidden from public */}
-      {/* <div className="p-4 border-t border-dark/5">
-        <NavLink
-          to="/admin"
-          className={({ isActive }) =>
-            `flex items-center gap-3 px-3.5 py-3 rounded-2xl text-sm font-semibold transition-all ${
-              isActive
-                ? 'bg-purple text-dark shadow-pill'
-                : 'bg-offwhite text-dark/80 hover:bg-dark/5'
-            }`
-          }
-        >
-          <Settings className="w-4 h-4 text-dark" />
-          <div className="flex flex-col">
-            <span className="leading-none">Admin Panel</span>
-            <span className="text-[10px] text-dark/60 font-normal mt-1">
-              Manage Videos & Tags
-            </span>
-          </div>
-        </NavLink>
-      </div> */}
+      {isAdminPage && (
+        <div className="p-4 border-t border-dark/5">
+          <NavLink
+            to="/admin"
+            className={({ isActive }) =>
+              `flex items-center gap-3 px-3.5 py-3 rounded-2xl text-sm font-semibold transition-all ${
+                isActive
+                  ? 'bg-purple text-dark shadow-pill'
+                  : 'bg-offwhite text-dark/80 hover:bg-dark/5'
+              }`
+            }
+          >
+            <Settings className="w-4 h-4 text-dark" />
+            <div className="flex flex-col">
+              <span className="leading-none">Admin Panel</span>
+              <span className="text-[10px] text-dark/60 font-normal mt-1">
+                Manage Videos & Tags
+              </span>
+            </div>
+          </NavLink>
+        </div>
+      )}
     </aside>
   );
 }

@@ -924,7 +924,7 @@ export default function AdminPage() {
       {/* ADD / EDIT VIDEO MODAL (Section 4.4 A)                                 */}
       {/* ====================================================================== */}
       {showVideoModal && (
-        <div className="fixed inset-0 z-50 bg-dark/75 backdrop-blur-sm flex items-center justify-center p-4 overflow-y-auto animate-fadeIn">
+        <div className="fixed inset-0 z-50 bg-black/30 backdrop-blur-sm flex items-center justify-center p-4 overflow-y-auto animate-fadeIn">
           <div
             onClick={(e) => e.stopPropagation()}
             className="bg-white rounded-3xl border border-dark/10 max-w-xl w-full overflow-hidden shadow-2xl flex flex-col max-h-[90vh]"
@@ -1138,7 +1138,7 @@ export default function AdminPage() {
       {/* RENAME TAG MODAL (Section 4.4 B)                                       */}
       {/* ====================================================================== */}
       {renameModal.open && (
-        <div className="fixed inset-0 z-50 bg-dark/75 backdrop-blur-sm flex items-center justify-center p-4">
+        <div className="fixed inset-0 z-50 bg-black/30 backdrop-blur-sm flex items-center justify-center p-4">
           <div className="bg-white rounded-3xl border border-dark/10 max-w-md w-full p-6 shadow-2xl space-y-4">
             <h3 className="text-base font-bold text-dark">
               Rename {renameModal.type} Tag
