@@ -28,10 +28,10 @@ export default function Navbar({ onOpenHelpModal }) {
           </div>
         </Link>
 
-        {/* Right side actions */}
+        {/* Right side actions - hidden from public navigation */}
         <div className="flex items-center gap-3">
-          {/* Status Badge */}
-          <Link
+          {/* Status Badge - hidden from public */}
+          {/* <Link
             to="/admin?tab=settings"
             className={`hidden md:flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold border transition-all ${
               isDemoMode
@@ -51,19 +51,19 @@ export default function Navbar({ onOpenHelpModal }) {
                 <span>Connected to Firebase</span>
               </>
             )}
-          </Link>
+          </Link> */}
 
-          {/* Quick Setup Guide Button for Non-Coder */}
-          <button
+          {/* Quick Setup Guide Button - hidden from public */}
+          {/* <button
             onClick={onOpenHelpModal}
             className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold bg-dark/5 hover:bg-dark/10 text-dark transition-all"
           >
             <HelpCircle className="w-4 h-4 text-accent" />
             <span>Setup Guide</span>
-          </button>
+          </button> */}
 
-          {/* Admin Panel Button */}
-          <Link
+          {/* Admin Panel Button - hidden from public */}
+          {/* <Link
             to="/admin"
             className={`flex items-center gap-2 px-4 py-2 rounded-full text-sm font-semibold transition-all shadow-pill ${
               isAdminPage
@@ -73,7 +73,7 @@ export default function Navbar({ onOpenHelpModal }) {
           >
             <Settings className="w-4 h-4" />
             <span>Admin Panel</span>
-          </Link>
+          </Link> */}
         </div>
       </div>
     </header>
