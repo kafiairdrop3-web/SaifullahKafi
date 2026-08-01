@@ -203,14 +203,13 @@ export async function deleteVideo(id) {
 }
 
 /**
- * Fetch all tags for a subject (merging any tags present in videos)
+ * Fetch all explicitly stored tags for a subject.
  */
 export async function getTagsBySubject(subjectId) {
   let tagsList = [];
 
   if (isDemoMode) {
-    const tags = getLocalTags();
-    tagsList = tags.filter(t => t.subjectId === subjectId);
+    tagsList = getLocalTags().filter(t => t.subjectId === subjectId);
   } else {
     try {
       const q = query(collection(db, 'tags'), where('subjectId', '==', subjectId));
@@ -218,48 +217,6 @@ export async function getTagsBySubject(subjectId) {
       tagsList = snapshot.docs.map(d => ({ id: d.id, ...d.data() }));
     } catch (err) {
       console.error('Error fetching tags from Firestore:', err);
-    }
-  }
-
-  // Also extract any tags currently present in videos for this subject
-  const videos = await getVideosBySubject(subjectId);
-  const existingSet = new Set(tagsList.map(t => `${t.type}:${t.value}`));
-
-  const additions = [];
-  videos.forEach(v => {
-    if (v.courseName && !existingSet.has(`course:${v.courseName}`)) {
-      additions.push({ subjectId, type: 'course', value: v.courseName });
-      existingSet.add(`course:${v.courseName}`);
-    }
-    if (v.chapterNumber && !existingSet.has(`chapter:${v.chapterNumber}`)) {
-      additions.push({ subjectId, type: 'chapter', value: v.chapterNumber });
-      existingSet.add(`chapter:${v.chapterNumber}`);
-    }
-    if (v.teacherName && !existingSet.has(`teacher:${v.teacherName}`)) {
-      additions.push({ subjectId, type: 'teacher', value: v.teacherName });
-      existingSet.add(`teacher:${v.teacherName}`);
-    }
-  });
-
-  if (additions.length > 0) {
-    if (isDemoMode) {
-      const allTags = getLocalTags();
-      const newLocal = additions.map((a, i) => ({
-        id: 'tag-' + Date.now() + '-' + i,
-        ...a
-      }));
-      saveLocalTags([...allTags, ...newLocal]);
-      tagsList.push(...newLocal);
-    } else {
-      // In Firestore, create any missing tag entries
-      for (const add of additions) {
-        try {
-          const ref = await addDoc(collection(db, 'tags'), add);
-          tagsList.push({ id: ref.id, ...add });
-        } catch (e) {
-          console.error('Error adding missing tag:', e);
-        }
-      }
     }
   }
 
@@ -352,29 +309,55 @@ export async function renameTag(subjectId, type, oldVal, newVal) {
 }
 
 /**
- * Delete a tag value
+ * Delete a tag value and clear it from every video that uses it.
  */
 export async function deleteTag(subjectId, type, value) {
+  const fieldByType = {
+    course: 'courseName',
+    chapter: 'chapterNumber',
+    teacher: 'teacherName'
+  };
+  const videoField = fieldByType[type];
+
+  if (!videoField) return;
+
   if (isDemoMode) {
     const tags = getLocalTags();
-    const filtered = tags.filter(t => !(t.subjectId === subjectId && t.type === type && t.value === value));
-    saveLocalTags(filtered);
+    saveLocalTags(tags.filter(t => !(t.subjectId === subjectId && t.type === type && t.value === value)));
+
+    const videos = getLocalVideos();
+    saveLocalVideos(videos.map(video => (
+      video.subjectId === subjectId && video[videoField] === value
+        ? { ...video, [videoField]: '' }
+        : video
+    )));
     return;
   }
 
   try {
-    const q = query(
+    const tagQuery = query(
       collection(db, 'tags'),
       where('subjectId', '==', subjectId),
       where('type', '==', type),
       where('value', '==', value)
     );
-    const snap = await getDocs(q);
-    const batch = writeBatch(db);
-    snap.docs.forEach(docSnap => {
-      batch.delete(docSnap.ref);
+    const tagSnap = await getDocs(tagQuery);
+    const deleteBatch = writeBatch(db);
+    tagSnap.docs.forEach(docSnap => deleteBatch.delete(docSnap.ref));
+    await deleteBatch.commit();
+
+    const videosQuery = query(
+      collection(db, 'videos'),
+      where('subjectId', '==', subjectId)
+    );
+    const videosSnap = await getDocs(videosQuery);
+    const clearBatch = writeBatch(db);
+    videosSnap.docs.forEach(docSnap => {
+      if (docSnap.data()[videoField] === value) {
+        clearBatch.update(docSnap.ref, { [videoField]: '' });
+      }
     });
-    await batch.commit();
+    await clearBatch.commit();
   } catch (err) {
     console.error('Error deleting tag in Firestore:', err);
     throw err;
